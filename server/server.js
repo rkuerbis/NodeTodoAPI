@@ -16,30 +16,30 @@ const port = process.env.PORT || 3000;
 var app = express();
 
 app.use(bodyParser.json());
-//
-// app.post('/todos', (req, res) => {
-//   console.log(req.body.text);
-//   var todo = new Todo({
-//     text: req.body.text
-//   });
-//
-//   todo.save().then((doc) => {
-//     res.send(doc);
-//   }, (e) => {
-//     res.status(400).send(e);
-//   });
-//
-//   console.log(req.body);
-//
-// });
 
-// app.get('/todos', (req, res) => {
-//   Todo.find().then((todos) => {
-//     res.send({todos});
-//   }, (e) => {
-//     res.status(400).send(e);
-//   });
-// });
+app.post('/todos', (req, res) => {
+  console.log(req.body.text);
+  var todo = new Todo({
+    text: req.body.text
+  });
+
+  todo.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+
+  console.log(req.body);
+
+});
+
+app.get('/todos', (req, res) => {
+  Todo.find().then((todos) => {
+    res.send({todos});
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
 
 var id  = '58317f7d17a22937b01094a1';
 
@@ -50,7 +50,7 @@ app.get('/todos/:id', (req, res) => {
   console.log(id);
   if (!ObjectID.isValid(id)) {
     console.log('ID not valid');
-    res.status(404).send();
+    return res.status(404).send();
   };
 
   console.log('ID valid');
