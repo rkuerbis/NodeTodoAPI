@@ -128,3 +128,62 @@ describe('GET /todos/:id', () => {
 
 
 });
+
+
+describe('DELETE /todos/:id', () => {
+  it('should remove a todo', (done) => {
+
+    var hexId = todos[0]._id.toHexString();
+
+    request(app)
+      .delete(`/todos/${hexId}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo._id).toBe(hexId);
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        Todo.findById(hexId).then((todos) => {
+          console.log(todos)
+          expect(todos).toBe(null);
+          expect(todos).toNotExist();
+          done();
+        }).catch((e) => done(e));
+      });
+  });
+
+  it('should return 404 if todo not found', (done) => {
+    const nottodos = [{
+      _id: new ObjectID(),
+      text: 'First test not todo'
+    }, {
+      _id: new ObjectID(),
+      text: 'Second test not todo'
+    }];
+    request(app)
+      .delete(`/todos/${nottodos[0]._id.toHexString()}`)
+      .expect(404)
+
+      .end(done);
+
+  });
+
+  it('should return 404 if object id is invalid', (done) => {
+    const nottodos = [{
+      _id: 123,
+      text: 'First test not todo'
+    }, {
+      _id: new ObjectID(),
+      text: 'Second test not todo'
+    }];
+    request(app)
+      .delete(`/todos/${nottodos[0]._id}`)
+      .expect(404)
+
+      .end(done);
+
+  });
+});
